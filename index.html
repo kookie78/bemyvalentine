@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Will You Be My Valentine? 💖</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Poppins', 'Comic Sans MS', cursive;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #ffd1dc, #ffe6f0);
+      overflow: hidden;
+    }
+
+    .card {
+      background: #fff0f6;
+      padding: 35px 30px 45px;
+      border-radius: 26px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(255, 105, 180, 0.25);
+      max-width: 420px;
+      width: 92%;
+      animation: pop 0.6s ease;
+      position: relative;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    h1 {
+      color: #ff4d88;
+      margin-bottom: 12px;
+      font-size: 28px;
+    }
+
+    p {
+      color: #cc3366;
+      font-size: 18px;
+      margin-bottom: 20px;
+      min-height: 28px;
+      transition: all 0.3s ease;
+    }
+
+    .minion {
+      width: 190px;
+      margin: 10px auto 15px;
+      border-radius: 18px;
+    }
+
+    .buttons {
+      position: relative;
+      height: 120px;
+      margin-top: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 16px 34px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: transform 0.25s ease, left 0.2s ease, top 0.2s ease;
+      user-select: none;
+    }
+
+    #yesBtn {
+      position: absolute;
+      background: linear-gradient(135deg, #ff4d88, #ff85a2);
+      color: white;
+      left: 20%;
+      bottom: 15px;
+      box-shadow: 0 12px 25px rgba(255, 77, 136, 0.45);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    #noBtn {
+      position: absolute;
+      background: #ffd6e8;
+      color: #cc3366;
+      right: 20%;
+      bottom: 15px;
+      box-shadow: 0 8px 18px rgba(204, 51, 102, 0.25);
+    }
+
+    .heart {
+      position: absolute;
+      font-size: 22px;
+      color: #ff4d88;
+      animation: float 4s linear forwards;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      from { transform: translateY(0); opacity: 1; }
+      to { transform: translateY(-120vh); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="card">
+
+    <img class="minion" src="https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif" alt="Cute Minion waiting" />
+
+    <h1>💌 Will you be my Valentine?</h1>
+    <p id="message"></p>
+
+    <div class="buttons" id="btnArea">
+      <button id="yesBtn">YES 💕</button>
+      <button id="noBtn">NO 🙃</button>
+    </div>
+
+  </div>
+
+  <script>
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const message = document.getElementById('message');
+    const card = document.getElementById('card');
+
+    let noClicks = 0;
+    let runawayMode = false;
+
+    // Function to move NO button slightly but stay near YES
+    function moveNoButton() {
+      const cardRect = card.getBoundingClientRect();
+      const maxLeft = cardRect.width - noBtn.offsetWidth - 20;
+      const maxTop = cardRect.height - noBtn.offsetHeight - 20;
+      const randomLeft = Math.random() * maxLeft;
+      const randomTop = Math.random() * maxTop;
+      noBtn.style.left = randomLeft + 'px';
+      noBtn.style.top = randomTop + 'px';
+    }
+
+    noBtn.addEventListener('click', () => {
+      noClicks++;
+
+      // Disable pulse animation so YES can scale
+      yesBtn.style.animation = 'none';
+
+      // YES button grows gradually
+      yesBtn.style.transform = `scale(${1 + noClicks * 0.05})`;
+
+      // Update message
+      if (noClicks <= 2) message.innerText = 'Are you sure? 🥺';
+      else if (noClicks <= 4) message.innerText = 'Please think once more 💗';
+      else if (noClicks <= 7) message.innerText = 'Please baby… 💔';
+      else if (noClicks <= 10) message.innerText = 'I’m still waiting… 😭💛';
+      else if (noClicks < 12) message.innerText = 'Almost there… 😅';
+      else message.innerText = 'You can’t catch me anymore 😭💞';
+
+      if (noClicks >= 12) runawayMode = true;
+
+      if (runawayMode) moveNoButton();
+    });
+
+    // NO button moves on hover after 12 clicks
+    noBtn.addEventListener('mouseenter', () => {
+      if (runawayMode) moveNoButton();
+    });
+
+    yesBtn.addEventListener('click', () => {
+      card.innerHTML = `
+        <h1>💖 I knew it!</h1>
+        <p>I love you ❤️<br>Happy Valentine’s Day 💘</p>
+        <img class="minion" src="https://media.giphy.com/media/MDJ9IbxxvDUQM/giphy.gif" />
+      `;
+
+      for (let i = 0; i < 28; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.innerText = '💗';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.bottom = '-20px';
+        heart.style.animationDuration = (2 + Math.random() * 3) + 's';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 5000);
+      }
+    });
+  </script>
+
+</body>
+</html>
